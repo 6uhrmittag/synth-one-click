@@ -15,16 +15,16 @@ const urls = {
 void registerInstaller() {
   var key = Registry.currentUser.createKey("SOFTWARE\\Classes\\synthriderz");
   if (key.getValue("URL Protocol") != null) {
-    print("Overwriting existing 'URL Protocol' value: " + key.getValue("URL Protocol")!.toString());
+    print("Overwriting existing 'URL Protocol' value: ${key.getValue("URL Protocol")}");
   }
-  key.createValue(RegistryValue("URL Protocol", RegistryValueType.string, ""));
+  key.createValue(RegistryValue.string("URL Protocol", ""));
 
   var shell = key.createKey("shell\\open\\command");
   if (shell.getValue("") != null) {
-    print("Overwriting existing command value: " + shell.getValue("")!.toString());
+    print("Overwriting existing command value: ${shell.getValue("")}");
   }
-  shell.createValue(RegistryValue(
-      "", RegistryValueType.string, "\"${getPath()}\" \"--install\" \"%1\""));
+  shell.createValue(RegistryValue.string(
+      "", "\"${getPath()}\" \"--install\" \"%1\""));
 
   shell.close();
   key.close();
@@ -45,7 +45,7 @@ String? getSynthRidersFolder() {
       path: "SOFTWARE\\Kluge Interactive\\SynthRiders");
 
   if (path != null && path.type == RegistryValueType.binary) {
-    var basePath = String.fromCharCodes(path.data as Uint8List);
+    var basePath = String.fromCharCodes(path.toBinary() as Uint8List);
     // from Version 3 on custom content is in the sub-folder SynthRidersUC
     var v3Path = p.join(basePath, 'SynthRidersUC');
     if (Directory(v3Path).existsSync()) {
@@ -64,7 +64,7 @@ late http.Client taskClient;
 
 Future<void> downloadFile(String uri, String folder) async {
   try {
-    print("Trying to download: ${uri.toString()}");
+    print("Trying to download: $uri");
     var response = await taskClient.get(Uri.parse(uri));
     var fileHeader = response.headers["content-disposition"];
     if (fileHeader == null) {
@@ -74,7 +74,7 @@ Future<void> downloadFile(String uri, String folder) async {
     var filename = RegExp(r'filename="(?<filename>.+?)"')
         .firstMatch(fileHeader)
         ?.namedGroup("filename");
-    print("Downloading file ${filename}...");
+    print("Downloading file $filename...");
     var file = File(p.join(folder, filename));
     await file.writeAsBytes(response.bodyBytes);
   } catch (error) {
