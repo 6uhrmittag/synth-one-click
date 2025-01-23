@@ -3,10 +3,10 @@ name: Build synth_one_click_installer.exe
 on:
   push:
     branches:
-      - main
+      - '**'
   pull_request:
     branches:
-      - main
+      - '**'
 
 jobs:
   build:
@@ -28,10 +28,17 @@ jobs:
       run: dart analyze --fatal-infos --fatal-warnings
 
     - name: Build executable
-      run: dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer.exe
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer.exe
+        else
+          dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer-dev.exe
+        fi
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: synth_one_click_installer
-        path: build/synth_one_click_installer.exe
+        path: |
+          build/synth_one_click_installer.exe
+          build/synth_one_click_installer-dev.exe
