@@ -15,13 +15,13 @@ const urls = {
 void registerInstaller() {
   var key = Registry.currentUser.createKey("SOFTWARE\\Classes\\synthriderz");
   if (key.getValue("URL Protocol") != null) {
-    print("Overwriting existing 'URL Protocol' value: " + key.getValue("URL Protocol")!.toString());
+    print("Overwriting existing 'URL Protocol' value: ${key.getValue("URL Protocol")}");
   }
   key.createValue(RegistryValue("URL Protocol", RegistryValueType.string, ""));
   
   var shell = key.createKey("shell\\open\\command");
   if (shell.getValue("") != null) {
-    print("Overwriting existing command value: " + shell.getValue("")!.toString());
+    print("Overwriting existing command value: ${shell.getValue("")}");
   }
   shell.createValue(RegistryValue(
       "", RegistryValueType.string, "\"${getPath()}\" \"--install\" \"%1\""));
@@ -54,6 +54,7 @@ String? getSynthRidersFolder() {
     }
     return basePath;
   }
+  return null; // Add this return statement
 }
 
 String getPath() {
@@ -64,7 +65,7 @@ late http.Client taskClient;
 
 Future<void> downloadFile(String uri, String folder) async {
   try {
-    print("Trying to download: ${uri.toString()}");
+    print("Trying to download: $uri");
     var response = await taskClient.get(Uri.parse(uri));
     var fileHeader = response.headers["content-disposition"];
     if (fileHeader == null) {
@@ -74,7 +75,7 @@ Future<void> downloadFile(String uri, String folder) async {
     var filename = RegExp(r'filename="(?<filename>.+?)"')
         .firstMatch(fileHeader)
         ?.namedGroup("filename");
-    print("Downloading file ${filename}...");
+    print("Downloading file $filename...");
     var file = File(p.join(folder, filename));
     await file.writeAsBytes(response.bodyBytes);
   } catch (error) {
@@ -111,8 +112,8 @@ void main(List<String> args) async {
     // Options
     switch (args[0]) {
       case "--install":
-        var _args = args[1].replaceFirst("synthriderz://", "");
-        var commands = _args.split(";");
+        var args = args[1].replaceFirst("synthriderz://", "");
+        var commands = args.split(";");
         taskClient = http.Client();
         for (var cmd in commands) {
           var opts = cmd.split("/");
