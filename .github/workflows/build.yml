@@ -27,11 +27,11 @@ jobs:
 
     - name: Build executable
       run: |
-        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+        if ($env:GITHUB_REF -eq 'refs/heads/main') {
           dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer.exe
-        else
+        } else {
           dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer-dev.exe
-        fi
+        }
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
