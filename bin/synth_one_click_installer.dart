@@ -17,14 +17,14 @@ void registerInstaller() {
   if (key.getValue("URL Protocol") != null) {
     print("Overwriting existing 'URL Protocol' value: ${key.getValue("URL Protocol")}");
   }
-  key.createValue(RegistryValue("URL Protocol", RegistryValueType.string, ""));
+  key.createValue(RegistryValue.string("URL Protocol", ""));
   
   var shell = key.createKey("shell\\open\\command");
   if (shell.getValue("") != null) {
     print("Overwriting existing command value: ${shell.getValue("")}");
   }
-  shell.createValue(RegistryValue(
-      "", RegistryValueType.string, "\"${getPath()}\" \"--install\" \"%1\""));
+  shell.createValue(RegistryValue.string(
+      "", "\"${getPath()}\" \"--install\" \"%1\""));
 
   shell.close();
   key.close();
@@ -45,7 +45,7 @@ String? getSynthRidersFolder() {
       path: "SOFTWARE\\Kluge Interactive\\SynthRiders");
 
   if (path != null && path.type == RegistryValueType.binary) {
-    var basePath = String.fromCharCodes(path.data as Uint8List);
+    var basePath = String.fromCharCodes(path.toBinary() as Uint8List);
     // from Version 3 on custom content is in the sub-folder SynthRidersUC
     var v3Path = p.join(basePath, 'SynthRidersUC');
     if (Directory(v3Path).existsSync()) {
@@ -112,8 +112,8 @@ void main(List<String> args) async {
     // Options
     switch (args[0]) {
       case "--install":
-        var args = args[1].replaceFirst("synthriderz://", "");
-        var commands = args.split(";");
+        var argsStr = args[1].replaceFirst("synthriderz://", "");
+        var commands = argsStr.split(";");
         taskClient = http.Client();
         for (var cmd in commands) {
           var opts = cmd.split("/");
