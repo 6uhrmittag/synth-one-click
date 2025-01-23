@@ -37,7 +37,14 @@ String? getSynthRidersFolder() {
       path: "SOFTWARE\\Kluge Interactive\\SynthRiders");
 
   if (path != null && path.type == RegistryValueType.binary) {
-    return String.fromCharCodes(path.data as Uint8List);
+    var basePath = String.fromCharCodes(path.data as Uint8List);
+    // from Version 3 on custom content is in the sub-folder SynthRidersUC
+    var v3Path = p.join(basePath, 'SynthRidersUC');
+    if (Directory(v3Path).existsSync()) {
+      print("Synth Riders v3 or above installed. Using sub-folder: SynthRidersUC.");
+      return v3Path;
+    }
+    return basePath;
   }
 }
 
