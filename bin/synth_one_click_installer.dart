@@ -14,10 +14,18 @@ const urls = {
 
 void registerInstaller() {
   var key = Registry.currentUser.createKey("SOFTWARE\\Classes\\synthriderz");
+  if (key.getValue("URL Protocol") != null) {
+    print("Overwriting existing 'URL Protocol' value: " + key.getValue("URL Protocol")!.toString());
+  }
   key.createValue(RegistryValue("URL Protocol", RegistryValueType.string, ""));
+  
   var shell = key.createKey("shell\\open\\command");
+  if (shell.getValue("") != null) {
+    print("Overwriting existing command value: " + shell.getValue("")!.toString());
+  }
   shell.createValue(RegistryValue(
       "", RegistryValueType.string, "\"${getPath()}\" \"--install\" \"%1\""));
+
   shell.close();
   key.close();
 }
