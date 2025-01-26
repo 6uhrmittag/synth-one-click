@@ -48,7 +48,7 @@ String? getSynthRidersFolder() {
     var basePath = String.fromCharCodes(path.data as Uint8List);
     // from Version 3 on custom content is in the sub-folder SynthRidersUC
     var v3Path = p.join(basePath, 'SynthRidersUC');
-    if (Directory(v3Path).existsSync()) {
+    if (await Directory(v3Path).exists()){
       print("Synth Riders v3 or above installed. Using sub-folder: SynthRidersUC.");
       return v3Path;
     }
