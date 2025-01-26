@@ -28,9 +28,9 @@ jobs:
     - name: Build executable
       run: |
         if ($env:GITHUB_REF -eq 'refs/heads/main') {
-          dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer.exe
+          dart compile exe bin/synth_one_click_installer.dart -o release/synth_one_click_installer.exe
         } else {
-          dart compile exe bin/synth_one_click_installer.dart -o build/synth_one_click_installer-dev.exe
+          dart compile exe bin/synth_one_click_installer.dart -o release/synth_one_click_installer-dev.exe
         }
 
     - name: Upload artifact
@@ -38,5 +38,17 @@ jobs:
       with:
         name: synth_one_click_installer
         path: |
-          build/synth_one_click_installer.exe
-          build/synth_one_click_installer-dev.exe
+          release/synth_one_click_installer.exe
+          release/synth_one_click_installer-dev.exe
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/heads/main')
+      with:
+        files: release/synth_one_click_installer.exe
+
+    - name: Pre-Release
+      uses: softprops/action-gh-release@v2
+      with:
+        prerelease: true
+        files: release/synth_one_click_installer-dev.exe
