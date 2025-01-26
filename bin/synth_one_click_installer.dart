@@ -14,18 +14,10 @@ const urls = {
 
 void registerInstaller() {
   var key = Registry.currentUser.createKey("SOFTWARE\\Classes\\synthriderz");
-  if (key.getValue("URL Protocol") != null) {
-    print("Overwriting existing 'URL Protocol' value: " + key.getValue("URL Protocol")!.toString());
-  }
   key.createValue(RegistryValue("URL Protocol", RegistryValueType.string, ""));
-
   var shell = key.createKey("shell\\open\\command");
-  if (shell.getValue("") != null) {
-    print("Overwriting existing command value: " + shell.getValue("")!.toString());
-  }
   shell.createValue(RegistryValue(
       "", RegistryValueType.string, "\"${getPath()}\" \"--install\" \"%1\""));
-
   shell.close();
   key.close();
 }
@@ -44,15 +36,9 @@ String? getSynthRidersFolder() {
       "com.synthriders.installpath_h4259148619",
       path: "SOFTWARE\\Kluge Interactive\\SynthRiders");
 
+  path = path.join("SynthRidersUC");
   if (path != null && path.type == RegistryValueType.binary) {
-    var basePath = String.fromCharCodes(path.data as Uint8List);
-    // from Version 3 on custom content is in the sub-folder SynthRidersUC
-    var v3Path = p.join(basePath, 'SynthRidersUC');
-    if (Directory(v3Path).exists()){
-      print("Synth Riders v3 or above installed. Using sub-folder: SynthRidersUC.");
-      return v3Path;
-    }
-    return basePath;
+    return String.fromCharCodes(path.data as Uint8List);
   }
 }
 
