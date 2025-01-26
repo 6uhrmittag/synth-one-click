@@ -36,9 +36,9 @@ String? getSynthRidersFolder() {
       "com.synthriders.installpath_h4259148619",
       path: "SOFTWARE\\Kluge Interactive\\SynthRiders");
 
-  var pathv3 = p.join(path, "SynthRidersUC");
-  if (pathv3 != null && pathv3.type == RegistryValueType.binary) {
-    return String.fromCharCodes(pathv3.data as Uint8List);
+  if (path != null && path.type == RegistryValueType.binary) {
+    var v3path = String.fromCharCodes(path.data as Uint8List) + "\\" + "SythRidersUC";
+    return v3path;
   }
 }
 
